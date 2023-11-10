@@ -3,6 +3,16 @@ server:
   ssl:
     enabled: false
 
+application:
+  kafka:
+    topic: "output-message-topic"
+
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: "127.0.0.1:9092"
+      client-id: "webhook-producer"
+
 bot:
   name:
   token:
