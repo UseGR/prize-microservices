@@ -1,0 +1,4 @@
+/webhook-service/src/main/resources/application.yaml
+/webhook-service/.gradle/
+/webhook-service/build/
+/.idea/
