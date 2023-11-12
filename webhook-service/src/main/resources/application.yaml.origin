@@ -5,7 +5,7 @@ server:
 
 application:
   kafka:
-    topic: "output-message-topic"
+    topic: output-message-topic, output-callback-topic
 
 spring:
   kafka:
