@@ -1,0 +1,18 @@
+server:
+  port: 8082
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/auth-db
+    username: postgres
+    password: postgres
+  liquibase:
+    change-log: db/changelog/db.changelog-master.yaml
+    contexts: ${spring.profiles.active}
+    url: jdbc:postgresql://localhost:5432/auth-db
+    user: postgres
+    password: postgres
+
+logging:
+  level:
+    org.springframework.r2dbc: DEBUG

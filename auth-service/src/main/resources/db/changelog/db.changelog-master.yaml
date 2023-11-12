@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username: postgres
+
+  - changeSet:
+      id: 0
+      author: galeev
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            dbms: postgresql
+            relativeToChangelogFile: false
+            path: db/changelog/changes/2023-11-11_create_users_table.sql

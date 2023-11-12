@@ -1,7 +1,9 @@
 package galeev.webhookservice.bot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import galeev.webhookservice.message.Message;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -11,20 +13,19 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 @RequiredArgsConstructor
 public class UpdateProcessor {
-    private final KafkaTemplate<String, Message> kafkaTemplate;
-    private TelegramBot telegramBot;
-    public void registerBot(TelegramBot telegramBot) {
-        this.telegramBot = telegramBot;
-    }
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
+    @SneakyThrows
     public void processInputUpdate(Update update) {
         if (update.hasMessage()) {
-            log.info("{}", update);
-            kafkaTemplate.send("output-message-topic", new Message(update.getMessage().getChatId(), update, Message.MessageType.MESSAGE));
+            Message message = new Message(update.getMessage().getChatId(), update, Message.MessageType.MESSAGE);
+            kafkaTemplate.send("output-message-topic", objectMapper.writeValueAsString(message));
         }
 
         if (update.hasCallbackQuery()) {
-            update.getCallbackQuery().getFrom().getId();
+            Message callback = new Message(update.getMessage().getChatId(), update, Message.MessageType.CALLBACK);
+            kafkaTemplate.send("output-callback-topic", objectMapper.writeValueAsString(callback));
         }
     }
 }

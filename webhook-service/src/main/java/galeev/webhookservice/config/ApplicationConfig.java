@@ -7,21 +7,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.kafka.core.KafkaAdmin.NewTopics;
 import org.springframework.kafka.support.JacksonUtils;
 
-@Configuration
-@Slf4j
-public class ApplicationConfig {
-    private final String topicName;
+import java.util.ArrayList;
+import java.util.List;
 
-    public ApplicationConfig(@Value("${application.kafka.topic}") String topicName) {
-        this.topicName = topicName;
-    }
+@Slf4j
+@Configuration
+public class ApplicationConfig {
+    @Value("${application.kafka.topics:}")
+    private String[] topics;
 
     @Bean
-    public NewTopic newTopic() {
-        return TopicBuilder.name(topicName)
-                .build();
+    public NewTopics newTopic() {
+        List<NewTopic> topicsList = new ArrayList<>();
+        for (String topic : this.topics) {
+            topicsList.add(TopicBuilder.name(topic).build());
+        }
+
+        return new NewTopics(topicsList.toArray(new NewTopic[]{}));
     }
 
     @Bean
