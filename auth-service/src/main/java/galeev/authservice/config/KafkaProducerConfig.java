@@ -1,4 +1,4 @@
-package galeev.webhookservice.config;
+package galeev.authservice.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

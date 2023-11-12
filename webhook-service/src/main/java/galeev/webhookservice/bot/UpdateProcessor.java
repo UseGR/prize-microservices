@@ -1,7 +1,7 @@
 package galeev.webhookservice.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import galeev.webhookservice.message.Message;
+import galeev.webhookservice.message.OutputMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +19,12 @@ public class UpdateProcessor {
     @SneakyThrows
     public void processInputUpdate(Update update) {
         if (update.hasMessage()) {
-            Message message = new Message(update.getMessage().getChatId(), update, Message.MessageType.MESSAGE);
-            kafkaTemplate.send("output-message-topic", objectMapper.writeValueAsString(message));
+            OutputMessage outputMessage = new OutputMessage(update.getMessage().getChatId(), update, OutputMessage.MessageType.MESSAGE);
+            kafkaTemplate.send("output-message-topic", objectMapper.writeValueAsString(outputMessage));
         }
 
         if (update.hasCallbackQuery()) {
-            Message callback = new Message(update.getMessage().getChatId(), update, Message.MessageType.CALLBACK);
+            OutputMessage callback = new OutputMessage(update.getMessage().getChatId(), update, OutputMessage.MessageType.CALLBACK);
             kafkaTemplate.send("output-callback-topic", objectMapper.writeValueAsString(callback));
         }
     }

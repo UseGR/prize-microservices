@@ -12,6 +12,13 @@ spring:
     url: jdbc:postgresql://localhost:5432/auth-db
     user: postgres
     password: postgres
+  kafka:
+    producer:
+      bootstrap-servers: "127.0.0.1:9092"
+
+application:
+  kafka:
+    topics: input-message-topic, input-callback-topic
 
 logging:
   level:

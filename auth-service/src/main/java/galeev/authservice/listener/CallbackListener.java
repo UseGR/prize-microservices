@@ -1,7 +1,7 @@
 package galeev.authservice.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import galeev.authservice.message.Message;
+import galeev.authservice.message.InputMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ public class CallbackListener {
     @SneakyThrows
     @KafkaListener(topics = "output-callback-topic", groupId = "group-id")
     public void messageHandler(String message) {
-        Message messageObject = objectMapper.readValue(message, Message.class);
-        log.info("{}", messageObject);
+        InputMessage inputMessageObject = objectMapper.readValue(message, InputMessage.class);
+        log.info("{}", inputMessageObject);
     }
 }
