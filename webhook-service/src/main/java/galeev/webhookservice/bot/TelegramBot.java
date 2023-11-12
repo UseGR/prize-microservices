@@ -44,7 +44,7 @@ public class TelegramBot extends TelegramWebhookBot {
 
     @PostConstruct
     public void init() {
-        updateProcessor.registerBot(this);
+//        updateProcessor.registerBot(this);
     }
 
     public void sendAnswerMessage(SendMessage message) {
