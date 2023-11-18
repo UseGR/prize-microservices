@@ -41,7 +41,13 @@ public class User implements Persistable<Long> {
 
     @Override
     public boolean isNew() {
-        return id != null;
+        return id != null
+                && fullname == null
+                && username != null
+                && phoneNumber == null
+                && dateOfBirth == null
+                && sex == null
+                && knowFrom == null;
     }
 
     public enum Sex {

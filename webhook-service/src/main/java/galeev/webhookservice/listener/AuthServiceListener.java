@@ -32,4 +32,20 @@ public class AuthServiceListener {
                         }
                 );
     }
+
+    @SneakyThrows
+    @KafkaListener(topics = "input-callback-topic", groupId = "webhook_group_id")
+    public void callbackHandler(String message) {
+        Mono.just(objectMapper.readValue(message, InputMessage.class))
+                .subscribe(inputMessage -> {
+                            if (inputMessage.simpleMessage() != null) {
+                                telegramBot.sendMessage(inputMessage.simpleMessage());
+                            }
+
+                            if (inputMessage.mediaMessage() != null) {
+                                telegramBot.sendMedia(inputMessage.mediaMessage());
+                            }
+                        }
+                );
+    }
 }

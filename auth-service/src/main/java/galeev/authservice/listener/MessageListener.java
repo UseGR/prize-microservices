@@ -19,7 +19,7 @@ public class MessageListener {
     private final ObjectMapper objectMapper;
     private final CommandProcessor processor;
     @SneakyThrows
-    @KafkaListener(topics = "output-message-topic", groupId = "group-id")
+    @KafkaListener(topics = "output-message-topic", groupId = "auth-group-id")
     public void messageHandler(String message) {
         Mono.just(objectMapper.readValue(message, InputMessage.class))
                 .map(Optional::of)

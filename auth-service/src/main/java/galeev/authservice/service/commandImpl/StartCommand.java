@@ -6,7 +6,6 @@ import galeev.authservice.service.UserService;
 import galeev.authservice.util.UserFieldChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -34,6 +33,11 @@ public class StartCommand implements Command {
                                     User user = new User();
                                     user.setId(update.getMessage().getChatId());
                                     user.setFirstname(update.getMessage().getFrom().getFirstName());
+
+                                    String username = update.getMessage().getFrom().getUserName() == null ? "no_username"
+                                    : update.getMessage().getFrom().getUserName();
+
+                                    user.setUsername(username);
 
                                     return userService.save(user)
                                             .flatMap(savedUser -> {
