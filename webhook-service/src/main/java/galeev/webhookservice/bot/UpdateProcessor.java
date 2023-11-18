@@ -24,7 +24,7 @@ public class UpdateProcessor {
         }
 
         if (update.hasCallbackQuery()) {
-            OutputMessage callback = new OutputMessage(update.getMessage().getChatId(), update, OutputMessage.MessageType.CALLBACK);
+            OutputMessage callback = new OutputMessage(update.getCallbackQuery().getFrom().getId(), update, OutputMessage.MessageType.CALLBACK);
             kafkaTemplate.send("output-callback-topic", objectMapper.writeValueAsString(callback));
         }
     }

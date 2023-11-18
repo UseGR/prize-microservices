@@ -1,7 +1,7 @@
 package galeev.authservice.service;
 
-import galeev.authservice.UserRepository;
 import galeev.authservice.entity.User;
+import galeev.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

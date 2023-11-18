@@ -1,4 +1,4 @@
-package galeev.authservice;
+package galeev.authservice.repository;
 
 import galeev.authservice.entity.User;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
