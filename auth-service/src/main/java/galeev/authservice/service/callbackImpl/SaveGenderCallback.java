@@ -7,6 +7,7 @@ import galeev.authservice.util.UserFieldChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -27,7 +28,7 @@ public class SaveGenderCallback implements Callback {
     private final UserFieldChecker userFieldChecker;
 
     @Override
-    public Flux<SendMessage> handleCallback(Update update) {
+    public Flux<BotApiMethodMessage> handleCallback(Update update) {
         return Flux.just(update)
                 .flatMap(update1 -> {
                     org.telegram.telegrambots.meta.api.objects.User telegramUser = update.getCallbackQuery().getFrom();

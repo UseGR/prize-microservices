@@ -6,6 +6,7 @@ import galeev.authservice.service.UserService;
 import galeev.authservice.util.UserFieldChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -21,7 +22,7 @@ public class StartCommand implements Command {
     private final UserFieldChecker userFieldChecker;
 
     @Override
-    public Flux<SendMessage> handleCommand(Update update) {
+    public Flux<BotApiMethodMessage> handleCommand(Update update) {
         return Flux.just(update)
                 .flatMap(update1 -> {
                     org.telegram.telegrambots.meta.api.objects.User telegramUser = update.getMessage().getFrom();
