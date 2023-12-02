@@ -6,8 +6,6 @@ import galeev.authservice.message.InputMessage;
 import galeev.authservice.message.OutputMessage;
 import galeev.authservice.service.Callback;
 import galeev.authservice.service.Processor;
-import galeev.authservice.service.UserService;
-import galeev.authservice.util.UserFieldChecker;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -19,15 +17,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class CallbackProcessor implements Processor {
-    private final UserFieldChecker userFieldChecker;
-    private final UserService userService;
     private final Map<String, Callback> map;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    public CallbackProcessor(UserFieldChecker userFieldChecker, UserService userService, List<Callback> list, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
-        this.userFieldChecker = userFieldChecker;
-        this.userService = userService;
+    public CallbackProcessor(List<Callback> list, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.map = list.stream().collect(Collectors.toMap(Callback::getType, Function.identity()));
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;

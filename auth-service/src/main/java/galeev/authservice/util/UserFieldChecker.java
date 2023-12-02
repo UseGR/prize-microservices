@@ -2,6 +2,7 @@ package galeev.authservice.util;
 
 import galeev.authservice.entity.User;
 import galeev.authservice.service.UserService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -128,5 +129,9 @@ public class UserFieldChecker {
 
             return Mono.empty();
         });
+    }
+    @PostConstruct
+    public void init() {
+        userService.registerUserFieldChecker(this);
     }
 }
