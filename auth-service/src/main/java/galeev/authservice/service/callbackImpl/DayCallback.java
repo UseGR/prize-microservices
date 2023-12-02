@@ -1,7 +1,9 @@
 package galeev.authservice.service.callbackImpl;
 
+import galeev.authservice.dto.DobDto;
 import galeev.authservice.entity.User;
 import galeev.authservice.service.Callback;
+import galeev.authservice.service.DateOfBirthService;
 import galeev.authservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,15 +14,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SaveGenderCallback implements Callback {
+public class DayCallback implements Callback {
     private final UserService userService;
-
+    private final DateOfBirthService dobService;
     @Override
-    public Flux<BotApiMethodMessage> handleCallback(Update update) {
+    public Flux<? extends BotApiMethodMessage> handleCallback(Update update) {
         return Flux.just(update)
                 .flatMap(update1 -> {
                     org.telegram.telegrambots.meta.api.objects.User telegramUser = update.getCallbackQuery().getFrom();
@@ -30,10 +31,11 @@ public class SaveGenderCallback implements Callback {
                             .flatMap(optionalUser -> {
                                 if (optionalUser.isPresent()) {
                                     User user = optionalUser.get();
-                                    user.setSex(update.getCallbackQuery().getData().equals("sex@female") ? User.Sex.FEMALE : User.Sex.MALE);
+                                    dobService.getDobCache().add(new DobDto(user.getId(), update.getCallbackQuery().getData(), DobDto.DateType.DAY));
 
-                                    return userService.updateUserAndCheckEmptyFields(user, update, "Пол сохранен");
+                                    return Mono.just(dobService.generateMonths(user.getId()));
                                 }
+
                                 log.error("user with id = {} wasn't found", telegramUser.getId());
                                 return Mono.empty();
                             });
@@ -42,6 +44,6 @@ public class SaveGenderCallback implements Callback {
 
     @Override
     public String getType() {
-        return "sex@";
+        return "day@";
     }
 }
