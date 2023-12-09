@@ -6,6 +6,7 @@ import galeev.authservice.message.InputMessage;
 import galeev.authservice.message.OutputMessage;
 import galeev.authservice.service.Callback;
 import galeev.authservice.service.Processor;
+import galeev.authservice.util.UserFieldChecker;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -20,11 +21,13 @@ public class CallbackProcessor implements Processor {
     private final Map<String, Callback> map;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    private final UserFieldChecker userFieldChecker;
 
-    public CallbackProcessor(List<Callback> list, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+    public CallbackProcessor(List<Callback> list, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper, UserFieldChecker userFieldChecker) {
         this.map = list.stream().collect(Collectors.toMap(Callback::getType, Function.identity()));
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
+        this.userFieldChecker = userFieldChecker;
     }
 
     @Override
@@ -48,6 +51,13 @@ public class CallbackProcessor implements Processor {
                                     kafkaTemplate.send("input-callback-topic", objectMapper.writeValueAsString(outputMessage));
                                 } catch (JsonProcessingException e) {
                                     throw new RuntimeException(e);
+                                }
+
+                                if (callback.getClass().getName().contains("Month") ||
+                                        callback.getClass().getName().contains("Gender") ||
+                                        callback.getClass().getName().contains("KnowFrom")
+                                ) {
+                                    userFieldChecker.isRegistrationComplete(inputMessage.update());
                                 }
                             });
                 });

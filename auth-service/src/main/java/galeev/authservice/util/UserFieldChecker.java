@@ -1,24 +1,31 @@
 package galeev.authservice.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import galeev.authservice.entity.User;
+import galeev.authservice.message.OutputMessage;
 import galeev.authservice.service.UserService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
 public class UserFieldChecker {
     private final UserService userService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     public InlineKeyboardMarkup enrichUser(User user) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
@@ -127,11 +134,60 @@ public class UserFieldChecker {
                 return Mono.just(fields);
             }
 
-            return Mono.empty();
+            return Mono.just(Collections.emptyList());
         });
     }
+
     @PostConstruct
     public void init() {
         userService.registerUserFieldChecker(this);
+    }
+
+    public void isRegistrationComplete(Update update) {
+        Long id = update.hasMessage() ? update.getMessage().getFrom().getId() : update.getCallbackQuery().getFrom().getId();
+        checkUserFields(update)
+                .subscribe(fields -> {
+                    if (fields.isEmpty()) {
+                        userService.findById(id)
+                                .subscribe(user -> {
+                                    SendMessage sendMessage = new SendMessage();
+                                    sendMessage.setChatId(id);
+                                    sendMessage.setText("Спасибо, регистрация завершена");
+
+                                    if (user.isAdmin()) {
+                                        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+                                        keyboardMarkup.setResizeKeyboard(true);
+                                        keyboardMarkup.setKeyboard(List.of(
+                                                new KeyboardRow(List.of(KeyboardButton.builder()
+                                                        .text("Сформировать лот для розыгрыша")
+                                                        .build())),
+                                                new KeyboardRow(List.of(KeyboardButton.builder()
+                                                        .text("Посмотреть всех пользователей")
+                                                        .build())),
+                                                new KeyboardRow(List.of(KeyboardButton.builder()
+                                                        .text("Посмотреть список лотов для розыгрыша")
+                                                        .build())),
+                                                new KeyboardRow(List.of(KeyboardButton.builder()
+                                                        .text("Разыграть призы")
+                                                        .build())),
+                                                new KeyboardRow(List.of(KeyboardButton.builder()
+                                                        .text("Выгрузить данные в таблицу Excel")
+                                                        .build())),
+                                                new KeyboardRow(List.of(KeyboardButton.builder()
+                                                        .text("Посмотреть черный список")
+                                                        .build()))
+                                        ));
+                                        sendMessage.setReplyMarkup(keyboardMarkup);
+                                    }
+
+                                    try {
+                                        OutputMessage outputMessage = new OutputMessage(sendMessage, null);
+                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
+                                    } catch (JsonProcessingException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+                    }
+                });
     }
 }
