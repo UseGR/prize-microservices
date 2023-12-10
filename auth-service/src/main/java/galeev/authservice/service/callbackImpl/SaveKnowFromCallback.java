@@ -44,7 +44,7 @@ public class SaveKnowFromCallback implements Callback {
                                         user.setKnowFrom(User.KnowFrom.WHATSAPP);
                                     }
 
-                                    return userService.updateUserAndCheckEmptyFields(user, update, "Спасибо");
+                                    return userService.updateUserAndCheckEmptyFields(user, update, "Ваш выбор сохранен");
                                 }
                                 log.error("user with id = {} wasn't found", telegramUser.getId());
                                 return Mono.empty();

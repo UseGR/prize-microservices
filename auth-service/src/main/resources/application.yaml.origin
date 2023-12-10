@@ -19,6 +19,8 @@ spring:
 application:
   kafka:
     topics: input-message-topic, input-callback-topic
+  admin:
+    id: 200157344
 
 logging:
   level:
