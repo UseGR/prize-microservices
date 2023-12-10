@@ -7,11 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,21 +36,7 @@ public class UserService {
                         sendMessage.setChatId(user.getId());
 
                         if (!fieldsList.isEmpty()) {
-                            InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-                            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-
-                            fieldsList.forEach(field -> {
-                                List<InlineKeyboardButton> keyboard = new ArrayList<>();
-                                keyboard.add(InlineKeyboardButton.builder()
-                                        .text(field.get("name"))
-                                        .callbackData(field.get("callbackData"))
-                                        .build());
-
-                                buttons.add(keyboard);
-                            });
-
-                            markup.setKeyboard(buttons);
-                            sendMessage.setReplyMarkup(markup);
+                            userFieldChecker.setAbsentFields(fieldsList, sendMessage);
                         }
 
                         sendMessage.setText(messageToSend);
@@ -62,6 +45,8 @@ public class UserService {
                     });
                 });
     }
+
+
 
     public void registerUserFieldChecker(UserFieldChecker userFieldChecker) {
         this.userFieldChecker = userFieldChecker;

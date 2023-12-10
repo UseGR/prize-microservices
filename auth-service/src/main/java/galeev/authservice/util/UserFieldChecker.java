@@ -155,29 +155,7 @@ public class UserFieldChecker {
                                     sendMessage.setText("Спасибо, регистрация завершена");
 
                                     if (user.isAdmin()) {
-                                        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-                                        keyboardMarkup.setResizeKeyboard(true);
-                                        keyboardMarkup.setKeyboard(List.of(
-                                                new KeyboardRow(List.of(KeyboardButton.builder()
-                                                        .text("Сформировать лот для розыгрыша")
-                                                        .build())),
-                                                new KeyboardRow(List.of(KeyboardButton.builder()
-                                                        .text("Посмотреть всех пользователей")
-                                                        .build())),
-                                                new KeyboardRow(List.of(KeyboardButton.builder()
-                                                        .text("Посмотреть список лотов для розыгрыша")
-                                                        .build())),
-                                                new KeyboardRow(List.of(KeyboardButton.builder()
-                                                        .text("Разыграть призы")
-                                                        .build())),
-                                                new KeyboardRow(List.of(KeyboardButton.builder()
-                                                        .text("Выгрузить данные в таблицу Excel")
-                                                        .build())),
-                                                new KeyboardRow(List.of(KeyboardButton.builder()
-                                                        .text("Посмотреть черный список")
-                                                        .build()))
-                                        ));
-                                        sendMessage.setReplyMarkup(keyboardMarkup);
+                                        enrichAdmin(sendMessage);
                                     }
 
                                     try {
@@ -189,5 +167,49 @@ public class UserFieldChecker {
                                 });
                     }
                 });
+    }
+
+    public void enrichAdmin(SendMessage sendMessage) {
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setResizeKeyboard(true);
+        keyboardMarkup.setKeyboard(List.of(
+                new KeyboardRow(List.of(KeyboardButton.builder()
+                        .text("Сформировать лот для розыгрыша")
+                        .build())),
+                new KeyboardRow(List.of(KeyboardButton.builder()
+                        .text("Посмотреть всех пользователей")
+                        .build())),
+                new KeyboardRow(List.of(KeyboardButton.builder()
+                        .text("Посмотреть список лотов для розыгрыша")
+                        .build())),
+                new KeyboardRow(List.of(KeyboardButton.builder()
+                        .text("Разыграть призы")
+                        .build())),
+                new KeyboardRow(List.of(KeyboardButton.builder()
+                        .text("Выгрузить данные в таблицу Excel")
+                        .build())),
+                new KeyboardRow(List.of(KeyboardButton.builder()
+                        .text("Посмотреть черный список")
+                        .build()))
+        ));
+        sendMessage.setReplyMarkup(keyboardMarkup);
+    }
+
+    public void setAbsentFields(List<Map<String, String>> fieldsList, SendMessage sendMessage) {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+
+        fieldsList.forEach(field -> {
+            List<InlineKeyboardButton> keyboard = new ArrayList<>();
+            keyboard.add(InlineKeyboardButton.builder()
+                    .text(field.get("name"))
+                    .callbackData(field.get("callbackData"))
+                    .build());
+
+            buttons.add(keyboard);
+        });
+
+        markup.setKeyboard(buttons);
+        sendMessage.setReplyMarkup(markup);
     }
 }

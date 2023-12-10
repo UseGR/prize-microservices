@@ -5,6 +5,7 @@ import galeev.authservice.service.Command;
 import galeev.authservice.service.UserService;
 import galeev.authservice.util.UserFieldChecker;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,6 +21,8 @@ import java.util.Optional;
 public class StartCommand implements Command {
     private final UserService userService;
     private final UserFieldChecker userFieldChecker;
+    @Value("${application.admin.id}")
+    private String adminId;
 
     @Override
     public Flux<BotApiMethodMessage> handleCommand(Update update) {
@@ -40,6 +43,10 @@ public class StartCommand implements Command {
 
                                     user.setUsername(username);
 
+                                    if (update.getMessage().getChatId().equals(Long.parseLong(adminId))) {
+                                        user.setAdmin(true);
+                                    }
+
                                     return userService.save(user)
                                             .flatMap(savedUser -> {
                                                 InlineKeyboardMarkup markup = userFieldChecker.enrichUser(savedUser);
@@ -50,10 +57,28 @@ public class StartCommand implements Command {
                                                         .build());
                                             });
                                 } else {
-                                    return Mono.just(SendMessage.builder()
-                                            .chatId(update.getMessage().getChatId())
-                                            .text("Привет, " + optionalUser.orElseThrow().getFirstname())
-                                            .build());
+                                    return userFieldChecker.checkUserFields(update)
+                                            .flatMap(fields -> {
+                                                if (fields.isEmpty()) {
+                                                    SendMessage sendMessage = SendMessage.builder()
+                                                            .chatId(update.getMessage().getChatId())
+                                                            .text("Привет, " + optionalUser.orElseThrow().getFirstname())
+                                                            .build();
+
+                                                    if (optionalUser.orElseThrow().isAdmin()) {
+                                                        userFieldChecker.enrichAdmin(sendMessage);
+                                                    }
+
+                                                    return Mono.just(sendMessage);
+                                                }
+
+                                                SendMessage sendMessage = new SendMessage();
+                                                sendMessage.setChatId(update.getMessage().getChatId());
+                                                userFieldChecker.setAbsentFields(fields, sendMessage);
+                                                sendMessage.setText("Пожалуйста, завершите регистрацию");
+
+                                                return Mono.just(sendMessage);
+                                            });
                                 }
                             });
                 });
