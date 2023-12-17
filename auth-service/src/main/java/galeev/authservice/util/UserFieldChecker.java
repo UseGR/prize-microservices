@@ -154,7 +154,7 @@ public class UserFieldChecker {
                                     sendMessage.setChatId(id);
                                     sendMessage.setText("Спасибо, регистрация завершена");
 
-                                    if (user.isAdmin()) {
+                                    if (user.getIsAdmin()) {
                                         enrichAdmin(sendMessage);
                                     }
 

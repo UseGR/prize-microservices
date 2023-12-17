@@ -29,15 +29,13 @@ public class User implements Persistable<Long> {
 
     private String dateOfBirth;
 
-    private boolean isParticipated;
+    private Boolean isParticipated;
 
     private Sex sex;
 
     private KnowFrom knowFrom;
 
-    private boolean isBlocked;
-
-    private boolean isAdmin;
+    private Boolean isAdmin;
 
     @Override
     public boolean isNew() {
@@ -63,11 +61,11 @@ public class User implements Persistable<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return isParticipated == user.isParticipated && isBlocked == user.isBlocked && isAdmin == user.isAdmin && Objects.equals(firstname, user.firstname) && Objects.equals(username, user.username) && Objects.equals(fullname, user.fullname) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(dateOfBirth, user.dateOfBirth) && sex == user.sex && knowFrom == user.knowFrom;
+        return isParticipated == user.isParticipated && isAdmin == user.isAdmin && Objects.equals(firstname, user.firstname) && Objects.equals(username, user.username) && Objects.equals(fullname, user.fullname) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(dateOfBirth, user.dateOfBirth) && sex == user.sex && knowFrom == user.knowFrom;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstname, username, fullname, phoneNumber, dateOfBirth, isParticipated, sex, knowFrom, isBlocked, isAdmin);
+        return Objects.hash(firstname, username, fullname, phoneNumber, dateOfBirth, isParticipated, sex, knowFrom, isAdmin);
     }
 }
