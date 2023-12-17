@@ -8,7 +8,6 @@ create table users
     date_of_birth   varchar(255),
     sex             varchar(255),
     know_from       varchar(255),
-    is_participated boolean,
-    is_admin        boolean,
-    is_blocked      boolean
+    is_participated boolean default false,
+    is_admin        boolean default false
 );

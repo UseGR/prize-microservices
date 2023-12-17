@@ -44,7 +44,7 @@ public class StartCommand implements Command {
                                     user.setUsername(username);
 
                                     if (update.getMessage().getChatId().equals(Long.parseLong(adminId))) {
-                                        user.setAdmin(true);
+                                        user.setIsAdmin(true);
                                     }
 
                                     return userService.save(user)
@@ -65,7 +65,7 @@ public class StartCommand implements Command {
                                                             .text("Привет, " + optionalUser.orElseThrow().getFirstname())
                                                             .build();
 
-                                                    if (optionalUser.orElseThrow().isAdmin()) {
+                                                    if (optionalUser.orElseThrow().getIsAdmin()) {
                                                         userFieldChecker.enrichAdmin(sendMessage);
                                                     }
 
