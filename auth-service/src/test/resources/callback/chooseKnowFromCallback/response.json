@@ -1,0 +1,27 @@
+{
+  "chat_id": "200157344",
+  "text": "Откуда Вы узнали о мероприятии?",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Instagram",
+          "callback_data": "knowFrom@INSTAGRAM"
+        }
+      ],
+      [
+        {
+          "text": "Telegram",
+          "callback_data": "knowFrom@TELEGRAM"
+        }
+      ],
+      [
+        {
+          "text": "WhatsApp",
+          "callback_data": "knowFrom@WHATSAPP"
+        }
+      ]
+    ]
+  },
+  "method": "sendmessage"
+}

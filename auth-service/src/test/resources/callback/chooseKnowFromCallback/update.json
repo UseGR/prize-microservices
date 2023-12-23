@@ -1,0 +1,43 @@
+{
+  "update_id": 305216383,
+  "callback_query": {
+    "id": "859669247589501656",
+    "from": {
+      "id": 200157344,
+      "first_name": "Рустем",
+      "is_bot": false,
+      "username": "Rus_tem716",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "message": {
+      "message_id": 1092,
+      "from": {
+        "id": 6870189176,
+        "first_name": "Development",
+        "is_bot": true,
+        "username": "TatbitDevelopmentBot"
+      },
+      "date": 1703410160,
+      "chat": {
+        "id": 200157344,
+        "type": "private",
+        "first_name": "Рустем",
+        "username": "Rus_tem716"
+      },
+      "text": "Пол сохранен",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Откуда Вы узнали о мероприятии?",
+              "callback_data": "@knowFrom"
+            }
+          ]
+        ]
+      }
+    },
+    "data": "@knowFrom",
+    "chat_instance": "-3192232160690883728"
+  }
+}

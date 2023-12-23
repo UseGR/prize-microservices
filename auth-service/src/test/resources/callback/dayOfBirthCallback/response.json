@@ -1,0 +1,143 @@
+{
+  "chat_id": "200157344",
+  "text": "Выберите день рождения",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "1",
+          "callback_data": "day@1"
+        },
+        {
+          "text": "2",
+          "callback_data": "day@2"
+        },
+        {
+          "text": "3",
+          "callback_data": "day@3"
+        },
+        {
+          "text": "4",
+          "callback_data": "day@4"
+        },
+        {
+          "text": "5",
+          "callback_data": "day@5"
+        },
+        {
+          "text": "6",
+          "callback_data": "day@6"
+        },
+        {
+          "text": "7",
+          "callback_data": "day@7"
+        }
+      ],
+      [
+        {
+          "text": "8",
+          "callback_data": "day@8"
+        },
+        {
+          "text": "9",
+          "callback_data": "day@9"
+        },
+        {
+          "text": "10",
+          "callback_data": "day@10"
+        },
+        {
+          "text": "11",
+          "callback_data": "day@11"
+        },
+        {
+          "text": "12",
+          "callback_data": "day@12"
+        },
+        {
+          "text": "13",
+          "callback_data": "day@13"
+        },
+        {
+          "text": "14",
+          "callback_data": "day@14"
+        }
+      ],
+      [
+        {
+          "text": "15",
+          "callback_data": "day@15"
+        },
+        {
+          "text": "16",
+          "callback_data": "day@16"
+        },
+        {
+          "text": "17",
+          "callback_data": "day@17"
+        },
+        {
+          "text": "18",
+          "callback_data": "day@18"
+        },
+        {
+          "text": "19",
+          "callback_data": "day@19"
+        },
+        {
+          "text": "20",
+          "callback_data": "day@20"
+        },
+        {
+          "text": "21",
+          "callback_data": "day@21"
+        }
+      ],
+      [
+        {
+          "text": "22",
+          "callback_data": "day@22"
+        },
+        {
+          "text": "23",
+          "callback_data": "day@23"
+        },
+        {
+          "text": "24",
+          "callback_data": "day@24"
+        },
+        {
+          "text": "25",
+          "callback_data": "day@25"
+        },
+        {
+          "text": "26",
+          "callback_data": "day@26"
+        },
+        {
+          "text": "27",
+          "callback_data": "day@27"
+        },
+        {
+          "text": "28",
+          "callback_data": "day@28"
+        }
+      ],
+      [
+        {
+          "text": "29",
+          "callback_data": "day@29"
+        },
+        {
+          "text": "30",
+          "callback_data": "day@30"
+        },
+        {
+          "text": "31",
+          "callback_data": "day@31"
+        }
+      ]
+    ]
+  },
+  "method": "sendmessage"
+}

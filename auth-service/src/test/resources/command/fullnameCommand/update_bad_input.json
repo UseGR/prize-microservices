@@ -1,0 +1,22 @@
+{
+  "update_id": 305216377,
+  "message": {
+    "message_id": 1086,
+    "from": {
+      "id": 200157344,
+      "first_name": "Рустем",
+      "is_bot": false,
+      "username": "Rus_tem716",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "date": 1703409625,
+    "chat": {
+      "id": 200157344,
+      "type": "private",
+      "first_name": "Рустем",
+      "username": "Rus_tem716"
+    },
+    "text": " "
+  }
+}

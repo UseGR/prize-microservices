@@ -1,0 +1,29 @@
+{
+  "update_id": 305216372,
+  "message": {
+    "message_id": 1075,
+    "from": {
+      "id": 200157344,
+      "first_name": "Рустем",
+      "is_bot": false,
+      "username": "Rus_tem716",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "date": 1703341814,
+    "chat": {
+      "id": 200157344,
+      "type": "private",
+      "first_name": "Рустем",
+      "username": "Rus_tem716"
+    },
+    "text": "/start",
+    "entities": [
+      {
+        "type": "bot_command",
+        "offset": 0,
+        "length": 6
+      }
+    ]
+  }
+}

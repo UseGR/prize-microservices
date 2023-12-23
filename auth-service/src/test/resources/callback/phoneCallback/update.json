@@ -1,0 +1,67 @@
+{
+  "update_id": 305216374,
+  "callback_query": {
+    "id": "859669249446886595",
+    "from": {
+      "id": 200157344,
+      "first_name": "Рустем",
+      "is_bot": false,
+      "username": "Rus_tem716",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "message": {
+      "message_id": 1081,
+      "from": {
+        "id": 6870189176,
+        "first_name": "Development",
+        "is_bot": true,
+        "username": "TatbitDevelopmentBot"
+      },
+      "date": 1703409192,
+      "chat": {
+        "id": 200157344,
+        "type": "private",
+        "first_name": "Рустем",
+        "username": "Rus_tem716"
+      },
+      "text": "Зарегистрируйтесь, пожалуйста",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Номер телефона",
+              "callback_data": "@phone"
+            }
+          ],
+          [
+            {
+              "text": "Дата рождения",
+              "callback_data": "@dateOfBirth"
+            }
+          ],
+          [
+            {
+              "text": "ФИО",
+              "callback_data": "@fio"
+            }
+          ],
+          [
+            {
+              "text": "Пол",
+              "callback_data": "@sex"
+            }
+          ],
+          [
+            {
+              "text": "Откуда Вы узнали о мероприятии?",
+              "callback_data": "@knowFrom"
+            }
+          ]
+        ]
+      }
+    },
+    "data": "@phone",
+    "chat_instance": "-3192232160690883728"
+  }
+}
