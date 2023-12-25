@@ -1,0 +1,19 @@
+{
+  "chat_id": "200157344",
+  "text": "Выберите пол",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Мужской",
+          "callback_data": "sex@male"
+        },
+        {
+          "text": "Женский",
+          "callback_data": "sex@female"
+        }
+      ]
+    ]
+  },
+  "method": "sendmessage"
+}

@@ -1,0 +1,109 @@
+{
+  "update_id": 305216380,
+  "callback_query": {
+    "id": "859669250046245404",
+    "from": {
+      "id": 200157345,
+      "first_name": "Рустем",
+      "is_bot": false,
+      "username": "Rus_tem716",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "message": {
+      "message_id": 1089,
+      "from": {
+        "id": 6870189176,
+        "first_name": "Development",
+        "is_bot": true,
+        "username": "TatbitDevelopmentBot"
+      },
+      "date": 1703409790,
+      "chat": {
+        "id": 200157344,
+        "type": "private",
+        "first_name": "Рустем",
+        "username": "Rus_tem716"
+      },
+      "text": "Выберите месяц рождения",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Январь",
+              "callback_data": "month@jan"
+            }
+          ],
+          [
+            {
+              "text": "Февраль",
+              "callback_data": "month@feb"
+            }
+          ],
+          [
+            {
+              "text": "Март",
+              "callback_data": "month@mar"
+            }
+          ],
+          [
+            {
+              "text": "Апрель",
+              "callback_data": "month@apr"
+            }
+          ],
+          [
+            {
+              "text": "Май",
+              "callback_data": "month@may"
+            }
+          ],
+          [
+            {
+              "text": "Июнь",
+              "callback_data": "month@jun"
+            }
+          ],
+          [
+            {
+              "text": "Июль",
+              "callback_data": "month@jul"
+            }
+          ],
+          [
+            {
+              "text": "Август",
+              "callback_data": "month@aug"
+            }
+          ],
+          [
+            {
+              "text": "Сентябрь",
+              "callback_data": "month@sep"
+            }
+          ],
+          [
+            {
+              "text": "Октябрь",
+              "callback_data": "month@oct"
+            }
+          ],
+          [
+            {
+              "text": "Ноябрь",
+              "callback_data": "month@nov"
+            }
+          ],
+          [
+            {
+              "text": "Декабрь",
+              "callback_data": "month@dec"
+            }
+          ]
+        ]
+      }
+    },
+    "data": "month@oct",
+    "chat_instance": "-3192232160690883728"
+  }
+}

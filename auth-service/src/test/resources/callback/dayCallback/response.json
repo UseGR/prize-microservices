@@ -1,0 +1,81 @@
+{
+  "chat_id": "200157344",
+  "text": "Выберите месяц рождения",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Январь",
+          "callback_data": "month@jan"
+        }
+      ],
+      [
+        {
+          "text": "Февраль",
+          "callback_data": "month@feb"
+        }
+      ],
+      [
+        {
+          "text": "Март",
+          "callback_data": "month@mar"
+        }
+      ],
+      [
+        {
+          "text": "Апрель",
+          "callback_data": "month@apr"
+        }
+      ],
+      [
+        {
+          "text": "Май",
+          "callback_data": "month@may"
+        }
+      ],
+      [
+        {
+          "text": "Июнь",
+          "callback_data": "month@jun"
+        }
+      ],
+      [
+        {
+          "text": "Июль",
+          "callback_data": "month@jul"
+        }
+      ],
+      [
+        {
+          "text": "Август",
+          "callback_data": "month@aug"
+        }
+      ],
+      [
+        {
+          "text": "Сентябрь",
+          "callback_data": "month@sep"
+        }
+      ],
+      [
+        {
+          "text": "Октябрь",
+          "callback_data": "month@oct"
+        }
+      ],
+      [
+        {
+          "text": "Ноябрь",
+          "callback_data": "month@nov"
+        }
+      ],
+      [
+        {
+          "text": "Декабрь",
+          "callback_data": "month@dec"
+        }
+      ]
+    ]
+  },
+  "method": "sendmessage"
+}

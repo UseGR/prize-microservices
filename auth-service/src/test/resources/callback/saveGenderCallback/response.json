@@ -1,0 +1,15 @@
+{
+  "chat_id": "200157344",
+  "text": "Пол сохранен",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Дата рождения",
+          "callback_data": "@dateOfBirth"
+        }
+      ]
+    ]
+  },
+  "method": "sendmessage"
+}

@@ -6,7 +6,6 @@ import galeev.authservice.repository.UserRepository;
 import galeev.authservice.util.UserFieldChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -61,7 +60,7 @@ public class UserService {
         this.userFieldChecker = userFieldChecker;
     }
 
-    public Flux<? extends BotApiMethodMessage> getUsersData(Long chatId) {
+    public Flux<SendMessage> getUsersData(Long chatId) {
         return Flux.just(SendMessage.builder()
                         .chatId(chatId)
                         .text("Список пользователей")
