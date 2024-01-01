@@ -52,7 +52,7 @@ public class ExcelCommand implements Command {
                                         .build()));
 
                     }
-                    log.error("user with id = {}, isn't admin, try to get AllUserCommand class response",
+                    log.error("user with id = {}, isn't admin, try to get ExcelCommand class response",
                             user.getId());
                     return Mono.empty();
                 });
