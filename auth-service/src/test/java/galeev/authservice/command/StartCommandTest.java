@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Flux;
@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collections;
 
@@ -60,7 +61,7 @@ public class StartCommandTest {
         adminId.setAccessible(true);
         adminId.set(startCommand, "200157344");
 
-        Flux<BotApiMethodMessage> request = startCommand.handleCommand(update);
+        Flux<PartialBotApiMethod<? extends Serializable>> request = startCommand.handleCommand(update);
 
         StepVerifier
                 .create(request)
@@ -79,7 +80,7 @@ public class StartCommandTest {
         when(userService.findById(any())).thenReturn(Mono.just(user));
         when(userFieldChecker.checkUserFields(update)).thenReturn(Mono.just(Collections.singletonList(any())));
 
-        Flux<BotApiMethodMessage> request = startCommand.handleCommand(update);
+        Flux<PartialBotApiMethod<? extends Serializable>> request = startCommand.handleCommand(update);
 
         StepVerifier
                 .create(request)
@@ -98,7 +99,7 @@ public class StartCommandTest {
         when(userService.findById(any())).thenReturn(Mono.just(user));
         when(userFieldChecker.checkUserFields(update)).thenReturn(Mono.just(Collections.emptyList()));
 
-        Flux<BotApiMethodMessage> request = startCommand.handleCommand(update);
+        Flux<PartialBotApiMethod<? extends Serializable>> request = startCommand.handleCommand(update);
 
         StepVerifier
                 .create(request)

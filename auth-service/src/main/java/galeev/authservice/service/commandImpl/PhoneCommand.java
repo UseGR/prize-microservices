@@ -6,11 +6,12 @@ import galeev.authservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 @Slf4j
@@ -20,7 +21,7 @@ public class PhoneCommand implements Command {
     private final UserService userService;
 
     @Override
-    public Flux<? extends BotApiMethodMessage> handleCommand(Update update) {
+    public Flux<PartialBotApiMethod<? extends Serializable>> handleCommand(Update update) {
         return Flux.just(update)
                 .flatMap(update1 -> {
                     org.telegram.telegrambots.meta.api.objects.User telegramUser = update.getMessage().getFrom();
