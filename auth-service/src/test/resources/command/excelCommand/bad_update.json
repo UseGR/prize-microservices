@@ -1,0 +1,22 @@
+{
+  "update_id": 305216515,
+  "message": {
+    "message_id": 1266,
+    "from": {
+      "id": 200157345,
+      "first_name": "Рустем",
+      "is_bot": false,
+      "username": "Rus_tem716",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "date": 1704111424,
+    "chat": {
+      "id": 200157345,
+      "type": "private",
+      "first_name": "Рустем",
+      "username": "Rus_tem716"
+    },
+    "text": "Выгрузить данные в таблицу Excel"
+  }
+}

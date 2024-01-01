@@ -7,13 +7,14 @@ import galeev.authservice.util.UserFieldChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 @Component
@@ -25,7 +26,7 @@ public class StartCommand implements Command {
     private String adminId;
 
     @Override
-    public Flux<BotApiMethodMessage> handleCommand(Update update) {
+    public Flux<PartialBotApiMethod<? extends Serializable>> handleCommand(Update update) {
         return Flux.just(update)
                 .flatMap(update1 -> {
                     org.telegram.telegrambots.meta.api.objects.User telegramUser = update.getMessage().getFrom();

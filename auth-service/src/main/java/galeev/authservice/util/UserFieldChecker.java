@@ -187,9 +187,6 @@ public class UserFieldChecker {
                         .build())),
                 new KeyboardRow(List.of(KeyboardButton.builder()
                         .text("Выгрузить данные в таблицу Excel")
-                        .build())),
-                new KeyboardRow(List.of(KeyboardButton.builder()
-                        .text("Посмотреть черный список")
                         .build()))
         ));
         sendMessage.setReplyMarkup(keyboardMarkup);

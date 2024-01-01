@@ -1,0 +1,24 @@
+{
+  "chatId": "200157344",
+  "messageThreadId": null,
+  "document": {
+    "attachName": "attach://Зарегистрированные.xlsx",
+    "new": true
+  },
+  "caption": "Таблица зарегистрировавшихся",
+  "disableNotification": null,
+  "replyToMessageId": null,
+  "replyMarkup": null,
+  "parseMode": null,
+  "thumbnail": null,
+  "captionEntities": [],
+  "allowSendingWithoutReply": null,
+  "disableContentTypeDetection": null,
+  "protectContent": null,
+  "file": {
+    "attachName": "attach://Зарегистрированные.xlsx",
+    "new": true
+  },
+  "fileField": "document",
+  "method": "senddocument"
+}

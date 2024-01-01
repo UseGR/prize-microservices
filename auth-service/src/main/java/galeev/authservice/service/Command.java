@@ -1,12 +1,13 @@
 package galeev.authservice.service;
 
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Flux;
 
+import java.io.Serializable;
+
 public interface Command {
-    Flux<? extends BotApiMethodMessage> handleCommand(Update update);
+    Flux<PartialBotApiMethod<? extends Serializable>> handleCommand(Update update);
 
     String getType();
 }

@@ -11,6 +11,8 @@ import galeev.authservice.service.commandImpl.FullnameCommand;
 import galeev.authservice.util.UserFieldChecker;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -48,18 +50,27 @@ public class CommandProcessor implements Processor {
 
                     command.handleCommand(update)
                             .subscribe(message -> {
-                                OutputMessage outputMessage = new OutputMessage(message, null);
-                                try {
-                                    kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
-                                } catch (JsonProcessingException e) {
-                                    throw new RuntimeException(e);
-                                }
+                                if (message instanceof SendMessage) {
+                                    OutputMessage outputMessage = new OutputMessage((SendMessage) message, null);
+                                    try {
+                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
+                                    } catch (JsonProcessingException e) {
+                                        throw new RuntimeException(e);
+                                    }
 
-                                if (command.getClass().getName().contains("Phone") ||
-                                        command.getClass().getName().contains("Username") ||
-                                        command.getClass().getName().contains("Fullname")
-                                ) {
-                                    userFieldChecker.isRegistrationComplete(inputMessage.update());
+                                    if (command.getClass().getName().contains("Phone") ||
+                                            command.getClass().getName().contains("Username") ||
+                                            command.getClass().getName().contains("Fullname")
+                                    ) {
+                                        userFieldChecker.isRegistrationComplete(inputMessage.update());
+                                    }
+                                } else {
+                                    OutputMessage outputMessage = new OutputMessage(null, (SendDocument) message);
+                                    try {
+                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
+                                    } catch (JsonProcessingException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
                             });
                 });

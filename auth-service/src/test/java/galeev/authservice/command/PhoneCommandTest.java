@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Flux;
@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import static galeev.authservice.util.JsonUtils.loadResourceData;
 import static galeev.authservice.util.JsonUtils.objectMapper;
@@ -52,7 +53,7 @@ public class PhoneCommandTest {
         when(userService.updateUserAndCheckEmptyFields(user, update, "Номер телефона сохранен"))
                 .thenReturn(Mono.just(response));
 
-        Flux<? extends BotApiMethodMessage> request = phoneCommand.handleCommand(update);
+        Flux<PartialBotApiMethod<? extends Serializable>> request = phoneCommand.handleCommand(update);
 
         StepVerifier
                 .create(request)
@@ -68,7 +69,7 @@ public class PhoneCommandTest {
     void phoneKeyPressedByUnregisteredUser() {
         when(userService.findById(any())).thenReturn(Mono.empty());
 
-        Flux<? extends BotApiMethodMessage> request = phoneCommand.handleCommand(update);
+        Flux<PartialBotApiMethod<? extends Serializable>> request = phoneCommand.handleCommand(update);
 
         StepVerifier
                 .create(request)
