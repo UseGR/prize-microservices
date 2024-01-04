@@ -2,8 +2,8 @@ package galeev.authservice.service.processorImpl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import galeev.authservice.message.InputMessage;
-import galeev.authservice.message.OutputMessage;
+import galeev.authservice.message.InputFromWebhookServiceMessage;
+import galeev.authservice.message.OutputToWebhookServiceMessage;
 import galeev.authservice.service.Callback;
 import galeev.authservice.service.Processor;
 import galeev.authservice.util.UserFieldChecker;
@@ -31,9 +31,9 @@ public class CallbackProcessor implements Processor {
     }
 
     @Override
-    public void processRequest(InputMessage inputMessage) {
-        Mono.just(inputMessage)
-                .map(InputMessage::update)
+    public void processRequest(InputFromWebhookServiceMessage inputFromWebhookServiceMessage) {
+        Mono.just(inputFromWebhookServiceMessage)
+                .map(InputFromWebhookServiceMessage::update)
                 .subscribe(update -> {
                     Callback callback = map.entrySet().stream()
                             .filter(entry -> update.getCallbackQuery().getData().contains(entry.getKey())
@@ -46,9 +46,9 @@ public class CallbackProcessor implements Processor {
 
                     callback.handleCallback(update)
                             .subscribe(message -> {
-                                OutputMessage outputMessage = new OutputMessage(message, null);
+                                OutputToWebhookServiceMessage outputToWebhookServiceMessage = new OutputToWebhookServiceMessage(message, null);
                                 try {
-                                    kafkaTemplate.send("input-callback-topic", objectMapper.writeValueAsString(outputMessage));
+                                    kafkaTemplate.send("input-callback-topic", objectMapper.writeValueAsString(outputToWebhookServiceMessage));
                                 } catch (JsonProcessingException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -57,7 +57,7 @@ public class CallbackProcessor implements Processor {
                                         callback.getClass().getName().contains("Gender") ||
                                         callback.getClass().getName().contains("KnowFrom")
                                 ) {
-                                    userFieldChecker.isRegistrationComplete(inputMessage.update());
+                                    userFieldChecker.isRegistrationComplete(inputFromWebhookServiceMessage.update());
                                 }
                             });
                 });

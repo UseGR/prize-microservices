@@ -2,8 +2,9 @@ package galeev.authservice.service.processorImpl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import galeev.authservice.message.InputMessage;
-import galeev.authservice.message.OutputMessage;
+import galeev.authservice.message.InputFromWebhookServiceMessage;
+import galeev.authservice.message.OutputToPrizeServiceMessage;
+import galeev.authservice.message.OutputToWebhookServiceMessage;
 import galeev.authservice.service.Command;
 import galeev.authservice.service.Processor;
 import galeev.authservice.service.UserService;
@@ -38,41 +39,60 @@ public class CommandProcessor implements Processor {
 
 
     @Override
-    public void processRequest(InputMessage inputMessage) {
-        Mono.just(inputMessage)
-                .map(InputMessage::update)
+    public void processRequest(InputFromWebhookServiceMessage inputFromWebhookServiceMessage) {
+        Mono.just(inputFromWebhookServiceMessage)
+                .map(InputFromWebhookServiceMessage::update)
                 .subscribe(update -> {
-                    Command command = map.entrySet().stream()
-                            .filter(entry -> update.getMessage().getText().contains(entry.getKey())
-                                    || update.getMessage().getText().matches(entry.getKey())
-                                    || update.getMessage().getText().startsWith(entry.getKey()))
-                            .map(Map.Entry::getValue).findAny().orElse(new FullnameCommand(userService));
+                    userFieldChecker.checkUserFields(update).subscribe(fields -> userService.findById(update.getMessage().getChatId()).subscribe(user -> {
+                        if (user.getIsAdmin().equals(true) && fields.isEmpty() && update.getMessage().getText().equals("Сформировать лот для розыгрыша")) {
+                            OutputToPrizeServiceMessage outputToPrizeServiceMessage =
+                                    new OutputToPrizeServiceMessage(
+                                            update.getMessage().getChatId(),
+                                            update,
+                                            OutputToPrizeServiceMessage.MessageType.MESSAGE
+                                    );
+                            try {
+                                kafkaTemplate.send("input-prize-service-message-topic",
+                                        objectMapper.writeValueAsString(outputToPrizeServiceMessage));
+                            } catch (JsonProcessingException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }));
 
-                    command.handleCommand(update)
-                            .subscribe(message -> {
-                                if (message instanceof SendMessage) {
-                                    OutputMessage outputMessage = new OutputMessage((SendMessage) message, null);
-                                    try {
-                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
-                                    } catch (JsonProcessingException e) {
-                                        throw new RuntimeException(e);
-                                    }
+                    if (!update.getMessage().getText().equals("Сформировать лот для розыгрыша")) {
+                        Command command = map.entrySet().stream()
+                                .filter(entry -> update.getMessage().getText().contains(entry.getKey())
+                                        || update.getMessage().getText().matches(entry.getKey())
+                                        || update.getMessage().getText().startsWith(entry.getKey()))
+                                .map(Map.Entry::getValue).findAny().orElse(new FullnameCommand(userService));
 
-                                    if (command.getClass().getName().contains("Phone") ||
-                                            command.getClass().getName().contains("Username") ||
-                                            command.getClass().getName().contains("Fullname")
-                                    ) {
-                                        userFieldChecker.isRegistrationComplete(inputMessage.update());
+                        command.handleCommand(update)
+                                .subscribe(message -> {
+                                    if (message instanceof SendMessage) {
+                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage = new OutputToWebhookServiceMessage((SendMessage) message, null);
+                                        try {
+                                            kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputToWebhookServiceMessage));
+                                        } catch (JsonProcessingException e) {
+                                            throw new RuntimeException(e);
+                                        }
+
+                                        if (command.getClass().getName().contains("Phone") ||
+                                                command.getClass().getName().contains("Username") ||
+                                                command.getClass().getName().contains("Fullname")
+                                        ) {
+                                            userFieldChecker.isRegistrationComplete(inputFromWebhookServiceMessage.update());
+                                        }
+                                    } else {
+                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage = new OutputToWebhookServiceMessage(null, (SendDocument) message);
+                                        try {
+                                            kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputToWebhookServiceMessage));
+                                        } catch (JsonProcessingException e) {
+                                            throw new RuntimeException(e);
+                                        }
                                     }
-                                } else {
-                                    OutputMessage outputMessage = new OutputMessage(null, (SendDocument) message);
-                                    try {
-                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
-                                    } catch (JsonProcessingException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            });
+                                });
+                    }
                 });
     }
 }

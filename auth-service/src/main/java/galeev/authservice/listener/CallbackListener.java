@@ -1,7 +1,7 @@
 package galeev.authservice.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import galeev.authservice.message.InputMessage;
+import galeev.authservice.message.InputFromWebhookServiceMessage;
 import galeev.authservice.service.processorImpl.CallbackProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -22,7 +22,7 @@ public class CallbackListener {
     @SneakyThrows
     @KafkaListener(topics = "output-callback-topic", groupId = "auth-group-id")
     public void messageHandler(String message) {
-        Mono.just(objectMapper.readValue(message, InputMessage.class))
+        Mono.just(objectMapper.readValue(message, InputFromWebhookServiceMessage.class))
                 .map(Optional::of)
                 .doOnNext(optionalMessage -> optionalMessage.ifPresentOrElse(processor::processRequest,
                         () -> log.error("empty callback")))

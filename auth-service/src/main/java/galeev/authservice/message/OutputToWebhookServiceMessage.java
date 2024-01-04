@@ -4,5 +4,5 @@ import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMess
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaBotMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-public record OutputMessage(BotApiMethodMessage simpleMessage, SendMediaBotMethod<Message> documentMessage) {
+public record OutputToWebhookServiceMessage(BotApiMethodMessage simpleMessage, SendMediaBotMethod<Message> documentMessage) {
 }

@@ -3,7 +3,7 @@ package galeev.authservice.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import galeev.authservice.entity.User;
-import galeev.authservice.message.OutputMessage;
+import galeev.authservice.message.OutputToWebhookServiceMessage;
 import galeev.authservice.service.UserService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -159,8 +159,8 @@ public class UserFieldChecker {
                                     }
 
                                     try {
-                                        OutputMessage outputMessage = new OutputMessage(sendMessage, null);
-                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
+                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage = new OutputToWebhookServiceMessage(sendMessage, null);
+                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputToWebhookServiceMessage));
                                     } catch (JsonProcessingException e) {
                                         throw new RuntimeException(e);
                                     }
