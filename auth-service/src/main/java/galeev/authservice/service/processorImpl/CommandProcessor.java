@@ -2,6 +2,7 @@ package galeev.authservice.service.processorImpl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import galeev.authservice.entity.User;
 import galeev.authservice.message.InputFromWebhookServiceMessage;
 import galeev.authservice.message.OutputToPrizeServiceMessage;
 import galeev.authservice.message.OutputToWebhookServiceMessage;
@@ -14,6 +15,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -28,8 +30,13 @@ public class CommandProcessor implements Processor {
     private final ObjectMapper objectMapper;
     private final UserService userService;
     private final UserFieldChecker userFieldChecker;
+    private final List<String> adminCommands = List.of("Сформировать лот для розыгрыша");
 
-    public CommandProcessor(List<Command> list, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper, UserService userService, UserFieldChecker userFieldChecker) {
+    public CommandProcessor(List<Command> list,
+                            KafkaTemplate<String, String> kafkaTemplate,
+                            ObjectMapper objectMapper,
+                            UserService userService,
+                            UserFieldChecker userFieldChecker) {
         this.map = list.stream().collect(Collectors.toMap(Command::getType, Function.identity()));
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
@@ -43,24 +50,9 @@ public class CommandProcessor implements Processor {
         Mono.just(inputFromWebhookServiceMessage)
                 .map(InputFromWebhookServiceMessage::update)
                 .subscribe(update -> {
-                    userFieldChecker.checkUserFields(update).subscribe(fields -> userService.findById(update.getMessage().getChatId()).subscribe(user -> {
-                        if (user.getIsAdmin().equals(true) && fields.isEmpty() && update.getMessage().getText().equals("Сформировать лот для розыгрыша")) {
-                            OutputToPrizeServiceMessage outputToPrizeServiceMessage =
-                                    new OutputToPrizeServiceMessage(
-                                            update.getMessage().getChatId(),
-                                            update,
-                                            OutputToPrizeServiceMessage.MessageType.MESSAGE
-                                    );
-                            try {
-                                kafkaTemplate.send("input-prize-service-message-topic",
-                                        objectMapper.writeValueAsString(outputToPrizeServiceMessage));
-                            } catch (JsonProcessingException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }));
+                    executeAdminCommand(update);
 
-                    if (!update.getMessage().getText().equals("Сформировать лот для розыгрыша")) {
+                    if (!adminCommands.contains(update.getMessage().getText())) {
                         Command command = map.entrySet().stream()
                                 .filter(entry -> update.getMessage().getText().contains(entry.getKey())
                                         || update.getMessage().getText().matches(entry.getKey())
@@ -70,9 +62,11 @@ public class CommandProcessor implements Processor {
                         command.handleCommand(update)
                                 .subscribe(message -> {
                                     if (message instanceof SendMessage) {
-                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage = new OutputToWebhookServiceMessage((SendMessage) message, null);
+                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage =
+                                                new OutputToWebhookServiceMessage((SendMessage) message, null);
                                         try {
-                                            kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputToWebhookServiceMessage));
+                                            kafkaTemplate.send("input-message-topic",
+                                                    objectMapper.writeValueAsString(outputToWebhookServiceMessage));
                                         } catch (JsonProcessingException e) {
                                             throw new RuntimeException(e);
                                         }
@@ -84,9 +78,11 @@ public class CommandProcessor implements Processor {
                                             userFieldChecker.isRegistrationComplete(inputFromWebhookServiceMessage.update());
                                         }
                                     } else {
-                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage = new OutputToWebhookServiceMessage(null, (SendDocument) message);
+                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage =
+                                                new OutputToWebhookServiceMessage(null, (SendDocument) message);
                                         try {
-                                            kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputToWebhookServiceMessage));
+                                            kafkaTemplate.send("input-message-topic",
+                                                    objectMapper.writeValueAsString(outputToWebhookServiceMessage));
                                         } catch (JsonProcessingException e) {
                                             throw new RuntimeException(e);
                                         }
@@ -94,5 +90,32 @@ public class CommandProcessor implements Processor {
                                 });
                     }
                 });
+    }
+
+    private void executeAdminCommand(Update update) {
+        userFieldChecker.checkUserFields(update).subscribe(fields ->
+                userService.findById(update.getMessage().getChatId())
+                        .subscribe(user -> {
+                            if (checkUserIsAdmin(user, fields, update)) {
+                                OutputToPrizeServiceMessage outputToPrizeServiceMessage =
+                                        new OutputToPrizeServiceMessage(
+                                                update.getMessage().getChatId(),
+                                                update,
+                                                OutputToPrizeServiceMessage.MessageType.MESSAGE
+                                        );
+                                try {
+                                    kafkaTemplate.send("input-prize-service-message-topic",
+                                            objectMapper.writeValueAsString(outputToPrizeServiceMessage));
+                                } catch (JsonProcessingException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }));
+    }
+
+    private boolean checkUserIsAdmin(User user, List<Map<String, String>> fields, Update update) {
+        return user.getIsAdmin().equals(true) &&
+                fields.isEmpty() &&
+                adminCommands.contains(update.getMessage().getText());
     }
 }

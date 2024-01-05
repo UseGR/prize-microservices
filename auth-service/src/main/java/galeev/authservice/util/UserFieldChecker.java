@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -175,6 +176,9 @@ public class UserFieldChecker {
         keyboardMarkup.setKeyboard(List.of(
                 new KeyboardRow(List.of(KeyboardButton.builder()
                         .text("Сформировать лот для розыгрыша")
+                        .webApp(WebAppInfo.builder()
+                                .url("https://usegr.github.io/prize-microservices-front/#/")
+                                .build())
                         .build())),
                 new KeyboardRow(List.of(KeyboardButton.builder()
                         .text("Посмотреть всех пользователей")

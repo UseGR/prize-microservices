@@ -2,7 +2,7 @@ package galeev.webhookservice.bot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import galeev.webhookservice.message.OutputMessage;
+import galeev.webhookservice.message.OutputToAuthServiceMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,9 @@ public class UpdateProcessor {
         Mono.just(update)
                 .subscribe(result -> {
                     if (result.hasMessage()) {
-                        OutputMessage outputMessage = new OutputMessage(update.getMessage().getChatId(), result, OutputMessage.MessageType.MESSAGE);
+                        OutputToAuthServiceMessage outputToAuthServiceMessage = new OutputToAuthServiceMessage(update.getMessage().getChatId(), result, OutputToAuthServiceMessage.MessageType.MESSAGE);
                         try {
-                            kafkaTemplate.send("output-message-topic", objectMapper.writeValueAsString(outputMessage));
+                            kafkaTemplate.send("output-message-topic", objectMapper.writeValueAsString(outputToAuthServiceMessage));
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException(e);
                         }
@@ -45,7 +45,7 @@ public class UpdateProcessor {
                         ) {
                             telegramBot.deleteMessage(result.getCallbackQuery().getFrom().getId(), result.getCallbackQuery().getMessage().getMessageId());
                         }
-                        OutputMessage callback = new OutputMessage(update.getCallbackQuery().getFrom().getId(), result, OutputMessage.MessageType.CALLBACK);
+                        OutputToAuthServiceMessage callback = new OutputToAuthServiceMessage(update.getCallbackQuery().getFrom().getId(), result, OutputToAuthServiceMessage.MessageType.CALLBACK);
                         try {
                             kafkaTemplate.send("output-callback-topic", objectMapper.writeValueAsString(callback));
                         } catch (JsonProcessingException e) {
