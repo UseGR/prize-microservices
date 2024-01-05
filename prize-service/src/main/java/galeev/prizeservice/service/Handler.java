@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux;
 
 import java.io.Serializable;
 
-public interface Command {
+public interface Handler {
     Flux<PartialBotApiMethod<? extends Serializable>> handleCommand(Update update);
 
     String getType();

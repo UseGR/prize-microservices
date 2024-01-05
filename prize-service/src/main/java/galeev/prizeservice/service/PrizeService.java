@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -33,7 +34,19 @@ public class PrizeService {
         return prizeRepository.save(prize);
     }
 
+    public Mono<Prize> save(Prize prize) {
+        return prizeRepository.save(prize);
+    }
+
     public Mono<Prize> findById(UUID id) {
         return prizeRepository.findById(id);
+    }
+
+    public Mono<Prize> findPrizeWithoutFileId() {
+        return prizeRepository.findByFileIdNull();
+    }
+
+    public Flux<Void> deleteByFileIdNull() {
+        return prizeRepository.deleteByFileIdNull();
     }
 }

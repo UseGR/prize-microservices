@@ -21,7 +21,8 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 @Service
 public class CommandProcessor implements Processor {
@@ -37,7 +38,7 @@ public class CommandProcessor implements Processor {
                             ObjectMapper objectMapper,
                             UserService userService,
                             UserFieldChecker userFieldChecker) {
-        this.map = list.stream().collect(Collectors.toMap(Command::getType, Function.identity()));
+        this.map = list.stream().collect(toMap(Command::getType, Function.identity()));
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
         this.userService = userService;
@@ -52,7 +53,7 @@ public class CommandProcessor implements Processor {
                 .subscribe(update -> {
                     executeAdminCommand(update);
 
-                    if (!adminCommands.contains(update.getMessage().getText())) {
+                    if (update.getMessage().hasText() && !adminCommands.contains(update.getMessage().getText())) {
                         Command command = map.entrySet().stream()
                                 .filter(entry -> update.getMessage().getText().contains(entry.getKey())
                                         || update.getMessage().getText().matches(entry.getKey())
@@ -101,10 +102,12 @@ public class CommandProcessor implements Processor {
                                         new OutputToPrizeServiceMessage(
                                                 update.getMessage().getChatId(),
                                                 update,
-                                                OutputToPrizeServiceMessage.MessageType.MESSAGE
+                                                update.getMessage().hasText() ?
+                                                        OutputToPrizeServiceMessage.MessageType.MESSAGE :
+                                                        OutputToPrizeServiceMessage.MessageType.MEDIA
                                         );
                                 try {
-                                    kafkaTemplate.send("input-prize-service-message-topic",
+                                    kafkaTemplate.send("output-prize-service-message-topic",
                                             objectMapper.writeValueAsString(outputToPrizeServiceMessage));
                                 } catch (JsonProcessingException e) {
                                     throw new RuntimeException(e);
@@ -116,6 +119,6 @@ public class CommandProcessor implements Processor {
     private boolean checkUserIsAdmin(User user, List<Map<String, String>> fields, Update update) {
         return user.getIsAdmin().equals(true) &&
                 fields.isEmpty() &&
-                adminCommands.contains(update.getMessage().getText());
+                (update.getMessage().getText() == null || adminCommands.contains(update.getMessage().getText()));
     }
 }

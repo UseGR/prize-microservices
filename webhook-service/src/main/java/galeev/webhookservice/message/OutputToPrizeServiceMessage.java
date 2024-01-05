@@ -1,8 +1,8 @@
-package galeev.authservice.message;
+package galeev.webhookservice.message;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public record InputFromWebhookServiceMessage(Long id, Update update, MessageType type) {
+public record OutputToPrizeServiceMessage(Long id, Update update, MessageType type) {
     public enum MessageType {
         MESSAGE, CALLBACK, MEDIA
     }
