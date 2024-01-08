@@ -13,10 +13,15 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
+import java.util.List;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class AllPrizesHandler implements Handler {
     @Value(value = "${application.admin.id}")
     private String adminId;
     private final PrizeMapper prizeMapper;
+
     @Override
     public Flux<PartialBotApiMethod<? extends Serializable>> handleCommand(Update update) {
 
@@ -33,19 +39,35 @@ public class AllPrizesHandler implements Handler {
                     PrizeDataDto prizeDataDto = prizeMapper.mapData(prize);
 
                     if (prize.isAnimation()) {
-                        SendAnimation sendAnimation = new SendAnimation();
-                        sendAnimation.setChatId(adminId);
-                        sendAnimation.setCaption(prizeDataDto.toString());
-                        sendAnimation.setAnimation(new InputFile(prize.getFileId()));
-
-                        return Mono.just(sendAnimation);
+                        return Mono.just(SendAnimation.builder()
+                                .chatId(adminId)
+                                .caption(prizeDataDto.toString())
+                                .animation(new InputFile(prize.getFileId()))
+                                .replyMarkup(InlineKeyboardMarkup.builder()
+                                        .keyboardRow(List.of(InlineKeyboardButton.builder()
+                                                .text("Редактировать лот")
+                                                .webApp(WebAppInfo.builder()
+                                                        .url("https://usegr.github.io/prize-microservices-front/#/" +
+                                                                prize.getId())
+                                                        .build())
+                                                .build()))
+                                        .build())
+                                .build());
                     } else {
-                        SendPhoto sendPhoto = new SendPhoto();
-                        sendPhoto.setChatId(adminId);
-                        sendPhoto.setCaption(prizeDataDto.toString());
-                        sendPhoto.setPhoto(new InputFile(prize.getFileId()));
-
-                        return Mono.just(sendPhoto);
+                        return Mono.just(SendPhoto.builder()
+                                .chatId(adminId)
+                                .caption(prizeDataDto.toString())
+                                .photo(new InputFile(prize.getFileId()))
+                                .replyMarkup(InlineKeyboardMarkup.builder()
+                                        .keyboardRow(List.of(InlineKeyboardButton.builder()
+                                                .text("Редактировать лот")
+                                                .webApp(WebAppInfo.builder()
+                                                        .url("https://usegr.github.io/prize-microservices-front/#/" +
+                                                                prize.getId())
+                                                        .build())
+                                                .build()))
+                                        .build())
+                                .build());
                     }
                 });
     }

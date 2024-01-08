@@ -2,7 +2,6 @@ package galeev.prizeservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import galeev.prizeservice.entity.Prize;
-import galeev.prizeservice.mapper.PrizeMapper;
 import galeev.prizeservice.message.OutputToWebhookServiceMessage;
 import galeev.prizeservice.repository.PrizeRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ public class PrizeService {
     private final ObjectMapper objectMapper;
     @Value(value = "${application.admin.id}")
     private String adminId;
-    private final PrizeMapper prizeMapper;
 
     @SneakyThrows
     public Mono<Prize> createNewPrize(Prize prize) {
