@@ -49,14 +49,26 @@ public class MediaProcessor implements Processor {
                                 .map(Map.Entry::getValue).findAny().orElseThrow();
 
                         command.handleCommand(update).subscribe(message -> {
-                            OutputToWebhookServiceMessage outputToWebhookServiceMessage = message.getMethod().equals("sendphoto") ?
-                                    new OutputToWebhookServiceMessage(null, (SendPhoto) message, null) :
-                                    new OutputToWebhookServiceMessage(null, null, (SendAnimation) message);
-                            try {
-                                kafkaTemplate.send("input-prize-service-message-topic",
-                                        objectMapper.writeValueAsString(outputToWebhookServiceMessage));
-                            } catch (JsonProcessingException e) {
-                                throw new RuntimeException(e);
+                            if (message.getMethod().equals("sendphoto") || message.getMethod().equals("sendAnimation")) {
+                                OutputToWebhookServiceMessage outputToWebhookServiceMessage = message.getMethod().equals("sendphoto") ?
+                                        new OutputToWebhookServiceMessage(null, (SendPhoto) message, null) :
+                                        new OutputToWebhookServiceMessage(null, null, (SendAnimation) message);
+                                try {
+                                    kafkaTemplate.send("input-prize-service-message-topic",
+                                            objectMapper.writeValueAsString(outputToWebhookServiceMessage));
+                                } catch (JsonProcessingException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            } else if (message.getMethod().equals("sendmessage")) {
+                                OutputToWebhookServiceMessage outputToWebhookServiceMessage =
+                                        new OutputToWebhookServiceMessage((SendMessage) message, null, null);
+
+                                try {
+                                    kafkaTemplate.send("input-prize-service-message-topic",
+                                            objectMapper.writeValueAsString(outputToWebhookServiceMessage));
+                                } catch (JsonProcessingException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
                         });
                     } else if (update.getMessage().hasPhoto()) {
