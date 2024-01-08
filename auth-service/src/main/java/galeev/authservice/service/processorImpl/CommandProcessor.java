@@ -31,7 +31,8 @@ public class CommandProcessor implements Processor {
     private final ObjectMapper objectMapper;
     private final UserService userService;
     private final UserFieldChecker userFieldChecker;
-    private final List<String> adminCommands = List.of("Сформировать лот для розыгрыша");
+    private final List<String> adminCommands = List.of("Сформировать лот для розыгрыша",
+            "Посмотреть список лотов для розыгрыша");
 
     public CommandProcessor(List<Command> list,
                             KafkaTemplate<String, String> kafkaTemplate,

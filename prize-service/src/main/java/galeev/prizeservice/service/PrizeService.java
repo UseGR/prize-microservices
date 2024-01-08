@@ -2,6 +2,7 @@ package galeev.prizeservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import galeev.prizeservice.entity.Prize;
+import galeev.prizeservice.mapper.PrizeMapper;
 import galeev.prizeservice.message.OutputToWebhookServiceMessage;
 import galeev.prizeservice.repository.PrizeRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class PrizeService {
     private final ObjectMapper objectMapper;
     @Value(value = "${application.admin.id}")
     private String adminId;
+    private final PrizeMapper prizeMapper;
 
     @SneakyThrows
     public Mono<Prize> createNewPrize(Prize prize) {
@@ -30,7 +32,7 @@ public class PrizeService {
                 objectMapper.writeValueAsString(new OutputToWebhookServiceMessage(SendMessage.builder()
                         .chatId(adminId)
                         .text("Теперь добавь изображение или анимацию к лоту")
-                        .build())));
+                        .build(), null, null)));
         return prizeRepository.save(prize);
     }
 
@@ -40,6 +42,10 @@ public class PrizeService {
 
     public Mono<Prize> findById(UUID id) {
         return prizeRepository.findById(id);
+    }
+
+    public Flux<Prize> findAll() {
+        return prizeRepository.findAll();
     }
 
     public Mono<Prize> findPrizeWithoutFileId() {

@@ -22,7 +22,17 @@ public class PrizeServiceListener {
     public void messageHandler(String message) {
         Mono.just(objectMapper.readValue(message, InputFromPrizeServiceMessage.class))
                 .subscribe(inputFromPrizeServiceMessage -> {
-                    telegramBot.sendMessage(inputFromPrizeServiceMessage.simpleMessage());
+                    if (inputFromPrizeServiceMessage.simpleMessage() != null) {
+                        telegramBot.sendMessage(inputFromPrizeServiceMessage.simpleMessage());
+                    }
+
+                    if (inputFromPrizeServiceMessage.photoMessage() != null) {
+                        telegramBot.sendMedia(inputFromPrizeServiceMessage.photoMessage());
+                    }
+
+                    if (inputFromPrizeServiceMessage.animationMessage() != null) {
+                        telegramBot.sendMedia(inputFromPrizeServiceMessage.animationMessage());
+                    }
                 });
     }
 
