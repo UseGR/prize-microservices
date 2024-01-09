@@ -43,9 +43,7 @@ public class CheckNotParticipatedUsersCommand implements Command {
                                 new OutputToPrizeServiceMessage(
                                         update.getMessage().getChatId(),
                                         update,
-                                        update.getMessage().hasText() ?
-                                                OutputToPrizeServiceMessage.MessageType.MESSAGE :
-                                                OutputToPrizeServiceMessage.MessageType.MEDIA
+                                        OutputToPrizeServiceMessage.MessageType.MESSAGE
                                 );
                         try {
                             kafkaTemplate.send("output-prize-service-message-topic",

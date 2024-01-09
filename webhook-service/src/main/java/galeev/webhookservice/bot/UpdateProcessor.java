@@ -22,7 +22,7 @@ public class UpdateProcessor {
     private final ObjectMapper objectMapper;
     private TelegramBot telegramBot;
     private final List<String> messagesToDelete = List.of("@phone", "@fio", "@dateOfBirth", "day@", "month@", "@sex",
-            "sex@", "knowFrom@", "@knowFrom");
+            "sex@", "knowFrom@", "@knowFrom", "rollPrize@");
 
     @SneakyThrows
     public void processInputUpdate(Update update) {
