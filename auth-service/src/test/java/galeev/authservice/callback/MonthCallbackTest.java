@@ -1,8 +1,11 @@
 package galeev.authservice.callback;
 
 import galeev.authservice.dto.DobDto;
+import galeev.authservice.repository.UserRepository;
 import galeev.authservice.service.DateOfBirthService;
 import galeev.authservice.service.callbackImpl.MonthCallback;
+import galeev.authservice.util.UserBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,11 +35,21 @@ public class MonthCallbackTest {
     @MockBean
     private DateOfBirthService dateOfBirthService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Update update;
 
     @BeforeEach
     void setUp() throws IOException {
+        userRepository.save(UserBuilder.generateUserWithIdAndUsername()).subscribe();
+        userRepository.save(UserBuilder.generateUserWithAllFields1()).subscribe();
         update = objectMapper.readValue(loadResourceData("callback/monthCallback/update.json"), Update.class);
+    }
+
+    @AfterEach
+    void destroy() {
+        userRepository.deleteAll().subscribe();
     }
 
     @Test

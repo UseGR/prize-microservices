@@ -1,9 +1,9 @@
 package galeev.authservice.callback;
 
+import galeev.authservice.repository.UserRepository;
 import galeev.authservice.service.callbackImpl.DayCallback;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import galeev.authservice.util.UserBuilder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
@@ -23,11 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DayCallbackTest {
     @Autowired
     private DayCallback dayCallback;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private Update update;
 
     @BeforeEach
     void setUp() throws IOException {
+        userRepository.save(UserBuilder.generateUserWithIdAndUsername()).subscribe();
         update = objectMapper.readValue(loadResourceData("callback/dayCallback/update.json"), Update.class);
+    }
+
+    @AfterEach
+    void destroy() {
+        userRepository.delete(UserBuilder.generateUserWithIdAndUsername()).subscribe();
     }
 
     @Test
