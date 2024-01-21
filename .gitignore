@@ -2,3 +2,4 @@
 /webhook-service/.gradle/
 /webhook-service/build/
 /.idea/
+/prize-service/src/main/resources/application.yaml

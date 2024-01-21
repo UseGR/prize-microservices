@@ -3,7 +3,7 @@ package galeev.authservice.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import galeev.authservice.entity.User;
-import galeev.authservice.message.OutputMessage;
+import galeev.authservice.message.OutputToWebhookServiceMessage;
 import galeev.authservice.service.UserService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -159,8 +160,8 @@ public class UserFieldChecker {
                                     }
 
                                     try {
-                                        OutputMessage outputMessage = new OutputMessage(sendMessage, null);
-                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputMessage));
+                                        OutputToWebhookServiceMessage outputToWebhookServiceMessage = new OutputToWebhookServiceMessage(sendMessage, null);
+                                        kafkaTemplate.send("input-message-topic", objectMapper.writeValueAsString(outputToWebhookServiceMessage));
                                     } catch (JsonProcessingException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -175,6 +176,9 @@ public class UserFieldChecker {
         keyboardMarkup.setKeyboard(List.of(
                 new KeyboardRow(List.of(KeyboardButton.builder()
                         .text("Сформировать лот для розыгрыша")
+                        .webApp(WebAppInfo.builder()
+                                .url("https://usegr.github.io/prize-microservices-front/#/")
+                                .build())
                         .build())),
                 new KeyboardRow(List.of(KeyboardButton.builder()
                         .text("Посмотреть всех пользователей")

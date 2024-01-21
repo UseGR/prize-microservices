@@ -1,15 +1,15 @@
 server:
-  port: 8082
+  port: 8083
 
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/auth-db
+    url: r2dbc:postgresql://localhost:5432/prize-db
     username: postgres
     password: postgres
   liquibase:
     change-log: db/changelog/db.changelog-master.yaml
     contexts: ${spring.profiles.active}
-    url: jdbc:postgresql://localhost:5432/auth-db
+    url: jdbc:postgresql://localhost:5432/prize-db
     user: postgres
     password: postgres
   kafka:
@@ -18,7 +18,7 @@ spring:
 
 application:
   kafka:
-    topics: input-message-topic, input-callback-topic, input-prize-service-message-topic
+    topics: input-prize-service-message-topic
   admin:
     id: 200157344
 

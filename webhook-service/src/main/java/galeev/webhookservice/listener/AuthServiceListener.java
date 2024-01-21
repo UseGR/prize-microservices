@@ -2,7 +2,7 @@ package galeev.webhookservice.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import galeev.webhookservice.bot.TelegramBot;
-import galeev.webhookservice.message.InputMessage;
+import galeev.webhookservice.message.InputFromAuthServiceMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +27,14 @@ public class AuthServiceListener {
     @SneakyThrows
     @KafkaListener(topics = "input-message-topic", groupId = "webhook_group_id")
     public void messageHandler(String message) {
-        Mono.just(objectMapper.readValue(message, InputMessage.class))
-                .subscribe(inputMessage -> {
-                            if (inputMessage.simpleMessage() != null) {
-                                telegramBot.sendMessage(inputMessage.simpleMessage());
+        Mono.just(objectMapper.readValue(message, InputFromAuthServiceMessage.class))
+                .subscribe(inputFromAuthServiceMessage -> {
+                            if (inputFromAuthServiceMessage.simpleMessage() != null) {
+                                telegramBot.sendMessage(inputFromAuthServiceMessage.simpleMessage());
                             }
 
-                            if (inputMessage.documentMessage() != null) {
-                                String chatId = inputMessage.documentMessage().getChatId();
+                            if (inputFromAuthServiceMessage.documentMessage() != null) {
+                                String chatId = inputFromAuthServiceMessage.documentMessage().getChatId();
                                 try {
                                     File document = ResourceUtils.getFile("Зарегистрированные.xlsx");
                                     SendDocument sendDocument = SendDocument.builder()
@@ -54,14 +54,14 @@ public class AuthServiceListener {
     @SneakyThrows
     @KafkaListener(topics = "input-callback-topic", groupId = "webhook_group_id")
     public void callbackHandler(String message) {
-        Mono.just(objectMapper.readValue(message, InputMessage.class))
-                .subscribe(inputMessage -> {
-                            if (inputMessage.simpleMessage() != null) {
-                                telegramBot.sendMessage(inputMessage.simpleMessage());
+        Mono.just(objectMapper.readValue(message, InputFromAuthServiceMessage.class))
+                .subscribe(inputFromAuthServiceMessage -> {
+                            if (inputFromAuthServiceMessage.simpleMessage() != null) {
+                                telegramBot.sendMessage(inputFromAuthServiceMessage.simpleMessage());
                             }
 
-                            if (inputMessage.documentMessage() != null) {
-                                telegramBot.sendMedia(inputMessage.documentMessage());
+                            if (inputFromAuthServiceMessage.documentMessage() != null) {
+                                telegramBot.sendMedia(inputFromAuthServiceMessage.documentMessage());
                             }
                         }
                 );
