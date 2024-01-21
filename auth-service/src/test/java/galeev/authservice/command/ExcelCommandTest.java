@@ -1,6 +1,9 @@
 package galeev.authservice.command;
 
+import galeev.authservice.repository.UserRepository;
 import galeev.authservice.service.commandImpl.ExcelCommand;
+import galeev.authservice.util.UserBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,11 +28,21 @@ public class ExcelCommandTest {
     @Autowired
     private ExcelCommand excelCommand;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Update update;
 
     @BeforeEach
     void setUp() throws IOException {
+        userRepository.save(UserBuilder.generateUserWithIdAndUsername()).subscribe();
+        userRepository.save(UserBuilder.generateUserWithAllFields1()).subscribe();
         update = objectMapper.readValue(loadResourceData("command/excelCommand/update.json"), Update.class);
+    }
+
+    @AfterEach
+    void destroy() {
+        userRepository.deleteAll().subscribe();
     }
 
     @Test

@@ -1,6 +1,9 @@
 package galeev.authservice.callback;
 
+import galeev.authservice.repository.UserRepository;
 import galeev.authservice.service.callbackImpl.SaveKnowFromCallback;
+import galeev.authservice.util.UserBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,11 +26,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SaveKnowFromCallbackTest {
     @Autowired
     private SaveKnowFromCallback saveKnowFromCallback;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private Update update;
 
     @BeforeEach
     void setUp() throws IOException {
+        userRepository.save(UserBuilder.generateUserWithIdAndUsername()).subscribe();
+        userRepository.save(UserBuilder.generateUserWithAllFields1()).subscribe();
         update = objectMapper.readValue(loadResourceData("callback/saveKnowFromCallback/update.json"), Update.class);
+    }
+
+    @AfterEach
+    void destroy() {
+        userRepository.deleteAll().subscribe();
     }
 
     @Test

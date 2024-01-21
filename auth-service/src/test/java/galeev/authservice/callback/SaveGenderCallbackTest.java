@@ -1,6 +1,9 @@
 package galeev.authservice.callback;
 
+import galeev.authservice.repository.UserRepository;
 import galeev.authservice.service.callbackImpl.SaveGenderCallback;
+import galeev.authservice.util.UserBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,11 +26,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SaveGenderCallbackTest {
     @Autowired
     private SaveGenderCallback saveGenderCallback;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private Update update;
 
     @BeforeEach
     void setUp() throws IOException {
+        userRepository.save(UserBuilder.generateUserWithIdAndUsername()).subscribe();
+        userRepository.save(UserBuilder.generateUserWithAllFields1()).subscribe();
         update = objectMapper.readValue(loadResourceData("callback/saveGenderCallback/update.json"), Update.class);
+    }
+
+    @AfterEach
+    void destroy() {
+        userRepository.deleteAll().subscribe();
     }
 
     @Test
